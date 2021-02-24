@@ -86,7 +86,11 @@ class VentaPermuta(db.Model):
     libro_id = db.Column(db.Integer, db.ForeignKey('libros.id'), nullable=False)
     direccion_id = db.Column(db.Integer, db.ForeignKey('direcciones.id'), nullable=False)
     tipoIntercambio = db.Column(db.String(100), nullable=False)
-    precio = db.Column(db.String(100), nullable=False)
+    precio = db.Column(db.String(100), nullable=True)
+    estado = db.Column(db.String(100), nullable=False)
+    f_creacion = db.Column(db.Date, nullable=True)
+    f_modificacion = db.Column(db.Date, nullable=True)
+    f_eliminacion = db.Column(db.Date, nullable=True)
     
     
     def serialize(self):
@@ -114,11 +118,15 @@ class Libro(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     titulo = db.Column(db.String(100), nullable=False)
     aditorial = db.Column(db.String(100), nullable=False)
-    nivel = db.Column(db.String(100), nullable=False)
-    asignatura = db.Column(db.String(100), nullable=False)
+    nivel = db.Column(db.String(100), nullable=True)
+    asignatura = db.Column(db.String(100), nullable=True)
     estadoNuevoUsado = db.Column(db.String(100), nullable=False)
     condicionOriginalCopia = db.Column(db.String(100), nullable=False)
     comentarios = db.Column(db.String(100), nullable=False)
+    estado = db.Column(db.String(100), nullable=False)
+    f_creacion = db.Column(db.Date, nullable=True)
+    f_modificacion = db.Column(db.Date, nullable=True)
+    f_eliminacion = db.Column(db.Date, nullable=True)
     ventaPermuta = db.relationship("VentaPermuta", backref="libro", uselist=False)
     libroAutor = db.relationship("LibroAutor", backref="libro", uselist=False)
     
@@ -150,6 +158,10 @@ class Autor(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     nombre = db.Column(db.String(100), nullable=False)
     pais = db.Column(db.String(100), nullable=False)
+    estado = db.Column(db.String(100), nullable=False)
+    f_creacion = db.Column(db.Date, nullable=True)
+    f_modificacion = db.Column(db.Date, nullable=True)
+    f_eliminacion = db.Column(db.Date, nullable=True)
     libroAutor = db.relationship("LibroAutor", backref="autor", uselist=False)
     
     def serialize(self):
