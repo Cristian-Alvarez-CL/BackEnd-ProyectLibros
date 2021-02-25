@@ -218,6 +218,16 @@ def crearusuarioid(id = None):
         comuna = request.json.get('comuna')
         tipoVivienda = request.json.get('tipoVivienda')
         numDepto = request.json.get('numDepto')
+
+        if not nombreCompleto: return jsonify({"msg": "Nombre Completo es requerido"}), 400
+        if not correo: return jsonify({"msg": "correo es requerido"}), 400
+        if not contrasenia: return jsonify({"msg": "contrasenia es requerida"}), 400
+        if not telefono: return jsonify({"msg": "telefono es requerido"}), 400
+        if not direccion: return jsonify({"msg": "direccion es requerido"}), 400
+        if not numero: return jsonify({"msg": "numero es requerida"}), 400
+        if not comuna: return jsonify({"msg": "comuna Completo es requerido"}), 400
+        if not tipoVivienda: return jsonify({"msg": "tipoVivienda es requerido"}), 400
+        if not numDepto: return jsonify({"msg": "numDepto es requerido"}), 400
         
         usuario = Cliente.query.get(id)
         if not usuario: return jsonify({"msg": "Registro no encontrado"}), 404
@@ -235,7 +245,7 @@ def crearusuarioid(id = None):
 
         usuario.update()
 
-        return jsonify(usuario.serialize()), 201
+        return jsonify(usuario.serialize()), 200
 
     if request.method == 'DELETE':
         usuario = Cliente.query.get(id)
@@ -247,6 +257,72 @@ def crearusuarioid(id = None):
 
         return jsonify({"msg": "Registro Borrado"}), 200
 
+#======================GET, PUT, DELETE para UN LIBRO==============================================
+
+@app.route("/api/crearlibro/<int:id>", methods=['GET', 'PUT', 'DELETE'])
+def crearlibroid(id = None):
+
+    if request.method == 'GET':
+        if id is not None:
+            libro = Libro.query.get(id)
+            if not libro or libro.estado == "borrado": return jsonify({"msg": "Registro no encontrado"}), 404
+            return jsonify(libro.serialize()), 200
+        else:
+            libro = Libro.query.all()
+            libro = list(map(lambda libro: libro.serialize(), libro))
+            return jsonify(libro), 200
+        
+    if request.method == 'PUT':
+        titulo = request.json.get('titulo').lower()
+        nombreAutor = request.json.get('nombreAutor')
+        editorial = request.json.get('editorial')
+        nivel = request.json.get('nivel')
+        asignatura = request.json.get('asignatura')
+        estadoNuevoUsado = request.json.get('estadoNuevoUsado')
+        condicionOriginalCopia = request.json.get('condicionOriginalCopia')
+        tipoIntercambio = request.json.get('tipoIntercambio')
+        comentarios = request.json.get('comentarios')
+        
+        if not titulo: return jsonify({"msg": "titulo es requerido"}), 400
+        if not nombreAutor: return jsonify({"msg": "nombreAutor es requerido"}), 400
+        if not editorial: return jsonify({"msg": "editorial es requerida"}), 400
+        if not nivel: return jsonify({"msg": "nivel es requerido"}), 400
+        if not asignatura: return jsonify({"msg": "asignatura es requerido"}), 400
+        if not estadoNuevoUsado: return jsonify({"msg": "estadoNuevoUsado es requerida"}), 400
+        if not condicionOriginalCopia: return jsonify({"msg": "condicionOriginalCopia Completo es requerido"}), 400
+        if not tipoIntercambio: return jsonify({"msg": "tipoIntercambio es requerido"}), 400
+        if not comentarios: return jsonify({"msg": "comentarios es requerido"}), 400
+
+
+        libro = Libro.query.get(id)
+        if not libro or libro.estado == "borrado": return jsonify({"msg": "Registro no encontrado"}), 404
+
+        libro = Libro()
+        libro.cliente_id = libro.cliente_id
+        libro.titulo = titulo
+        libro.nombreAutor = nombreAutor
+        libro.editorial = editorial
+        libro.nivel = nivel
+        libro.asignatura = asignatura
+        libro.estadoNuevoUsado = estadoNuevoUsado
+        libro.condicionOriginalCopia = condicionOriginalCopia
+        libro.tipoIntercambio = tipoIntercambio
+        libro.comentarios = comentarios
+        libro.estado = "activo"
+        libro.f_modificacion= datetime.date.today()
+        libro.update()
+
+        return jsonify(libro.serialize()), 200
+
+    if request.method == 'DELETE':
+        libro = Libro.query.get(id)
+        if not libro or libro.estado == "borrado": return jsonify({"msg": "libro no encontrado"}), 404
+
+        libro.estado = "borrado"
+        libro.f_eliminacion = datetime.date.today()
+        libro.update()
+
+        return jsonify({"msg": "Registro Borrado"}), 200
 
 if __name__ == '__main__':
     app.run()
