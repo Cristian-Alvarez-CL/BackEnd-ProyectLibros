@@ -193,6 +193,60 @@ def crearlibro():
         
         return jsonify(libros), 200
 
+#======================GET, PUT, DELETE para UN USUARIO==============================================
+
+@app.route("/api/crearusuario/<int:id>", methods=['GET', 'PUT', 'DELETE'])
+def crearusuarioid(id = None):
+
+    if request.method == 'GET':
+        if id is not None:
+            usuario = Cliente.query.get(id)
+            if not usuario or usuario.estado == "borrado": return jsonify({"msg": "Registro no encontrado"}), 404
+            return jsonify(usuario.serialize()), 200
+        else:
+            usuario = Cliente.query.all()
+            usuario = list(map(lambda usuario: usuario.serialize(), usuario))
+            return jsonify(usuario), 200
+        
+    if request.method == 'PUT':
+        nombreCompleto = request.json.get('nombreCompleto')
+        correo = request.json.get('correo')
+        contrasenia = request.json.get('contrasenia')
+        telefono = request.json.get('telefono')
+        direccion = request.json.get('direccion')
+        numero = request.json.get('numero')
+        comuna = request.json.get('comuna')
+        tipoVivienda = request.json.get('tipoVivienda')
+        numDepto = request.json.get('numDepto')
+        
+        usuario = Cliente.query.get(id)
+        if not usuario: return jsonify({"msg": "Registro no encontrado"}), 404
+
+        usuario.nombreCompleto = nombreCompleto
+        usuario.correo = correo
+        usuario.contrasenia = generate_password_hash(contrasenia)
+        usuario.telefono = telefono
+        usuario.direccion = direccion
+        usuario.numero = numero
+        usuario.comuna = comuna
+        usuario.tipoVivienda = tipoVivienda
+        usuario.numDepto = numDepto
+        usuario.f_modificacion= datetime.date.today()
+
+        usuario.update()
+
+        return jsonify(usuario.serialize()), 201
+
+    if request.method == 'DELETE':
+        usuario = Cliente.query.get(id)
+        if not usuario or usuario.estado == "borrado": return jsonify({"msg": "Usuario no encontrado"}), 404
+
+        usuario.estado = "borrado"
+        usuario.f_eliminacion = datetime.date.today()
+        usuario.update()
+
+        return jsonify({"msg": "Registro Borrado"}), 200
+
 
 if __name__ == '__main__':
     app.run()
