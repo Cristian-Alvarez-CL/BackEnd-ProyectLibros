@@ -142,6 +142,7 @@ def crearlibro():
         estadoNuevoUsado = request.json.get('estadoNuevoUsado')
         condicionOriginalCopia = request.json.get('condicionOriginalCopia')
         tipoIntercambio = request.json.get('tipoIntercambio')
+        precio = request.json.get('precio')
         comentarios = request.json.get('comentarios')
 
 
@@ -154,6 +155,7 @@ def crearlibro():
         if not estadoNuevoUsado: return jsonify({"msg": "estadoNuevoUsado es requerida"}), 400
         if not condicionOriginalCopia: return jsonify({"msg": "condicionOriginalCopia Completo es requerido"}), 400
         if not tipoIntercambio: return jsonify({"msg": "tipoIntercambio es requerido"}), 400
+        if not precio: return jsonify({"msg": "precio es requerido"}), 400
         if not comentarios: return jsonify({"msg": "comentarios es requerido"}), 400
     
 
@@ -170,6 +172,7 @@ def crearlibro():
         libro.estadoNuevoUsado = estadoNuevoUsado
         libro.condicionOriginalCopia = condicionOriginalCopia
         libro.tipoIntercambio = tipoIntercambio
+        libro.precio = precio
         libro.comentarios = comentarios
         libro.estado = "activo"
         libro.f_creacion = datetime.date.today()
@@ -281,6 +284,7 @@ def crearlibroid(id = None):
         estadoNuevoUsado = request.json.get('estadoNuevoUsado')
         condicionOriginalCopia = request.json.get('condicionOriginalCopia')
         tipoIntercambio = request.json.get('tipoIntercambio')
+        precio = request.json.get('precio')
         comentarios = request.json.get('comentarios')
         
         if not titulo: return jsonify({"msg": "titulo es requerido"}), 400
@@ -291,6 +295,7 @@ def crearlibroid(id = None):
         if not estadoNuevoUsado: return jsonify({"msg": "estadoNuevoUsado es requerida"}), 400
         if not condicionOriginalCopia: return jsonify({"msg": "condicionOriginalCopia Completo es requerido"}), 400
         if not tipoIntercambio: return jsonify({"msg": "tipoIntercambio es requerido"}), 400
+        if not precio: return jsonify({"msg": "precio es requerido"}), 400
         if not comentarios: return jsonify({"msg": "comentarios es requerido"}), 400
 
 
@@ -307,6 +312,7 @@ def crearlibroid(id = None):
         libro.estadoNuevoUsado = estadoNuevoUsado
         libro.condicionOriginalCopia = condicionOriginalCopia
         libro.tipoIntercambio = tipoIntercambio
+        libro.precio = precio
         libro.comentarios = comentarios
         libro.estado = "activo"
         libro.f_modificacion= datetime.date.today()

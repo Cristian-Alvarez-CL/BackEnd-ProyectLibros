@@ -60,7 +60,7 @@ class Libro(db.Model):
     estadoNuevoUsado = db.Column(db.String(100), nullable=False)
     condicionOriginalCopia = db.Column(db.String(100), nullable=False)
     tipoIntercambio = db.Column(db.String(100), nullable=False)
-    precio = db.Column(db.String(100), nullable=True)
+    precio = db.Column(db.Integer, nullable=True)
     estado = db.Column(db.String(100), nullable=False)
     comentarios = db.Column(db.String(100), nullable=False)
     f_creacion = db.Column(db.Date, nullable=True)
