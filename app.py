@@ -56,33 +56,33 @@ def crearusuario():
         if not numDepto: return jsonify({"msg": "numDepto es requerido"}), 400
         
 
-        usuarios = Cliente.query.filter_by(correo=correo).first()
-        if usuarios: return jsonify({"error": "ERROR", "msg": "correo ya existe!!!"}), 400
+        usuario = Cliente.query.filter_by(correo=correo).first()
+        if usuario: return jsonify({"error": "ERROR", "msg": "Usuario ya existe!!!"}), 400
         
-        usuarios = Cliente()
-        usuarios.nombreCompleto = nombreCompleto
-        usuarios.correo = correo
-        usuarios.contrasenia = generate_password_hash(contrasenia)
-        usuarios.telefono = telefono
-        usuarios.direccion = direccion
-        usuarios.numero = numero
-        usuarios.comuna = comuna
-        usuarios.tipoVivienda = tipoVivienda
-        usuarios.numDepto = numDepto
-        usuarios.estado = "activo"
-        usuarios.f_creacion = datetime.date.today()
-        usuarios.f_modificacion= None
-        usuarios.f_eliminacion = None
-        usuarios.save()
+        usuario = Cliente()
+        usuario.nombreCompleto = nombreCompleto
+        usuario.correo = correo
+        usuario.contrasenia = generate_password_hash(contrasenia)
+        usuario.telefono = telefono
+        usuario.direccion = direccion
+        usuario.numero = numero
+        usuario.comuna = comuna
+        usuario.tipoVivienda = tipoVivienda
+        usuario.numDepto = numDepto
+        usuario.estado = "activo"
+        usuario.f_creacion = datetime.date.today()
+        usuario.f_modificacion= None
+        usuario.f_eliminacion = None
+        usuario.save()
 
-        if not usuarios: return jsonify({"msg": "Registro Fallido!!!"}), 400
+        if not usuario: return jsonify({"msg": "Registro Fallido!!!"}), 400
 
         #expires = datetime.timedelta(days=1)
         #access_token = create_access_token(identity=user.id, expires_delta=expires)
 
         data = {
             "msj": "Usuario creado y activo",
-            "usuario": usuarios.serialize(),
+            "usuario": usuario.serialize(),
         }
 
         return jsonify(data), 201
@@ -102,13 +102,13 @@ def login():
     contrasenia = request.json.get('contrasenia')
 
     if not correo: return jsonify({"msg": "correo es requerido"}), 400
-    if not contrasenia: return jsonify({"msg": "contrasenia es requerido"}), 400
+    if not contrasenia: return jsonify({"msg": "contraseña es requerido"}), 400
 
     user = Cliente.query.filter_by(correo=correo).first()
-    if not user: return jsonify({"msg": "correo/contrasenia es incorrecto!!!"}), 400
+    if not user: return jsonify({"msg": "correo/contraseña es incorrecto!!!"}), 400
 
     if not check_password_hash(user.contrasenia, contrasenia):
-        return jsonify({"msg": "correo/contrasenia es incorrecto!!!"}), 400
+        return jsonify({"msg": "correo/contraseña es incorrecto!!!"}), 400
     
     expires = datetime.timedelta(days=1)
     access_token = create_access_token(identity=user.id, expires_delta=expires)
@@ -129,60 +129,69 @@ def perfil():
     return jsonify(user.serialize()), 200
 
 #======================CREAR LIBRO==============================================
-@app.route("/api/crearlibro", methods=['POST'])
+@app.route("/api/crearlibro", methods=['POST', 'GET'])
 def crearlibro():
+
+    if request.method == 'POST':
+        cliente_id = request.json.get('cliente_id')
+        titulo = request.json.get('titulo').lower()
+        nombreAutor = request.json.get('nombreAutor')
+        editorial = request.json.get('editorial')
+        nivel = request.json.get('nivel')
+        asignatura = request.json.get('asignatura')
+        estadoNuevoUsado = request.json.get('estadoNuevoUsado')
+        condicionOriginalCopia = request.json.get('condicionOriginalCopia')
+        tipoIntercambio = request.json.get('tipoIntercambio')
+        comentarios = request.json.get('comentarios')
+
+
+        if not cliente_id: return jsonify({"msg": "cliente_id es requerido"}), 400
+        if not titulo: return jsonify({"msg": "titulo es requerido"}), 400
+        if not nombreAutor: return jsonify({"msg": "nombreAutor es requerido"}), 400
+        if not editorial: return jsonify({"msg": "editorial es requerida"}), 400
+        if not nivel: return jsonify({"msg": "nivel es requerido"}), 400
+        if not asignatura: return jsonify({"msg": "asignatura es requerido"}), 400
+        if not estadoNuevoUsado: return jsonify({"msg": "estadoNuevoUsado es requerida"}), 400
+        if not condicionOriginalCopia: return jsonify({"msg": "condicionOriginalCopia Completo es requerido"}), 400
+        if not tipoIntercambio: return jsonify({"msg": "tipoIntercambio es requerido"}), 400
+        if not comentarios: return jsonify({"msg": "comentarios es requerido"}), 400
     
-    nombreCompleto = request.json.get('nombreCompleto')
-    correo = request.json.get('correo')
-    contrasenia = request.json.get('contrasenia')
-    telefono = request.json.get('telefono')
-    direccion = request.json.get('direccion')
-    numero = request.json.get('numero')
-    comuna = request.json.get('comuna')
-    tipoVivienda = request.json.get('tipoVivienda')
-    numDepto = request.json.get('numDepto')
 
-    if not nombreCompleto: return jsonify({"msg": "Nombre Completo es requerido"}), 400
-    if not correo: return jsonify({"msg": "correo es requerido"}), 400
-    if not contrasenia: return jsonify({"msg": "contrasenia es requerida"}), 400
-    if not telefono: return jsonify({"msg": "telefono es requerido"}), 400
-    if not direccion: return jsonify({"msg": "direccion es requerido"}), 400
-    if not numero: return jsonify({"msg": "numero es requerida"}), 400
-    if not comuna: return jsonify({"msg": "comuna Completo es requerido"}), 400
-    if not tipoVivienda: return jsonify({"msg": "tipoVivienda es requerido"}), 400
-    if not numDepto: return jsonify({"msg": "numDepto es requerido"}), 400
+        libro = Libro.query.filter_by(titulo=titulo).first()
+        if libro: return jsonify({"error": "ERROR", "msg": "Libro ya existe!!!"}), 400
     
+        libro = Libro()
+        libro.cliente_id = cliente_id
+        libro.titulo = titulo
+        libro.nombreAutor = nombreAutor
+        libro.editorial = editorial
+        libro.nivel = nivel
+        libro.asignatura = asignatura
+        libro.estadoNuevoUsado = estadoNuevoUsado
+        libro.condicionOriginalCopia = condicionOriginalCopia
+        libro.tipoIntercambio = tipoIntercambio
+        libro.comentarios = comentarios
+        libro.estado = "activo"
+        libro.f_creacion = datetime.date.today()
+        libro.f_modificacion= None
+        libro.f_eliminacion = None
+        libro.save()
 
-    user = Cliente.query.filter_by(correo=correo).first()
-    if user: return jsonify({"error": "ERROR", "msg": "correo ya existe!!!"}), 400
+        if not libro: return jsonify({"msg": "Registro Fallido!!!"}), 400
+
+        data = {
+            "msj": "Libro creado y activo",
+            "usuario": libro.serialize(),
+        }
+
+        return jsonify(data), 201
     
-    user = Cliente()
-    user.nombreCompleto = nombreCompleto
-    user.correo = correo
-    user.contrasenia = generate_password_hash(contrasenia)
-    user.telefono = telefono
-    user.direccion = direccion
-    user.numero = numero
-    user.comuna = comuna
-    user.tipoVivienda = tipoVivienda
-    user.numDepto = numDepto
-    user.estado = "activo"
-    user.f_creacion = datetime.date.today()
-    user.f_modificacion= None
-    user.f_eliminacion = None
-    user.save()
-
-    if not user: return jsonify({"msg": "Registro Fallido!!!"}), 400
-
-    #expires = datetime.timedelta(days=1)
-    #access_token = create_access_token(identity=user.id, expires_delta=expires)
-
-    data = {
-        "msj": "Usuario creado y activo",
-        "usuario": user.serialize(),
-    }
-
-    return jsonify(data), 201
+    if request.method == 'GET':
+        libros = Libro.query.all()
+        if not libros: return jsonify({"msg": "No se encontraron registros"}), 404
+        libros = list(map(lambda libros: libros.serialize(), libros))
+        
+        return jsonify(libros), 200
 
 
 if __name__ == '__main__':

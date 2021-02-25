@@ -60,9 +60,12 @@ class Libro(db.Model):
     estadoNuevoUsado = db.Column(db.String(100), nullable=False)
     condicionOriginalCopia = db.Column(db.String(100), nullable=False)
     tipoIntercambio = db.Column(db.String(100), nullable=False)
-    precio = db.Column(db.String(100), nullable=False)
+    precio = db.Column(db.String(100), nullable=True)
     estado = db.Column(db.String(100), nullable=False)
     comentarios = db.Column(db.String(100), nullable=False)
+    f_creacion = db.Column(db.Date, nullable=True)
+    f_modificacion = db.Column(db.Date, nullable=True)
+    f_eliminacion = db.Column(db.Date, nullable=True)
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
     
     def serialize(self):
