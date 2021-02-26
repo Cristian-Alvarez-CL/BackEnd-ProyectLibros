@@ -81,7 +81,7 @@ def crearusuario():
         #access_token = create_access_token(identity=user.id, expires_delta=expires)
 
         data = {
-            "msj": "Usuario creado y activo",
+            "msg": "Usuario creado y activo",
             "usuario": usuario.serialize(),
         }
 
@@ -183,7 +183,7 @@ def crearlibro():
         if not libro: return jsonify({"msg": "Registro Fallido!!!"}), 400
 
         data = {
-            "msj": "Libro creado y activo",
+            "msg": "Libro creado y activo",
             "usuario": libro.serialize(),
         }
 
@@ -303,7 +303,6 @@ def crearlibroid(id = None):
         if not libro or libro.estado == "borrado": return jsonify({"msg": "Registro no encontrado"}), 404
 
         libro = Libro()
-        libro.cliente_id = libro.cliente_id
         libro.titulo = titulo
         libro.nombreAutor = nombreAutor
         libro.editorial = editorial
