@@ -302,7 +302,6 @@ def crearlibroid(id = None):
         libro = Libro.query.get(id)
         if not libro or libro.estado == "borrado": return jsonify({"msg": "Registro no encontrado"}), 404
 
-        libro = Libro()
         libro.titulo = titulo
         libro.nombreAutor = nombreAutor
         libro.editorial = editorial
@@ -330,4 +329,4 @@ def crearlibroid(id = None):
         return jsonify({"msg": "Registro Borrado"}), 200
 
 if __name__ == '__main__':
-    app.run()
+    manager.run()
