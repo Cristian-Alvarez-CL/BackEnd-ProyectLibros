@@ -9,6 +9,7 @@ from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity
 from models import db, Cliente, Libro
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -94,7 +95,7 @@ def crearusuario():
         
         return jsonify(usuarios), 200
 
-#======================LOGIN==============================================
+#======================LOGIN==========================================================
 @app.route("/api/login", methods=['POST'])
 def login():
 
@@ -157,10 +158,12 @@ def crearlibro():
         if not tipoIntercambio: return jsonify({"msg": "tipoIntercambio es requerido"}), 400
         if not precio: return jsonify({"msg": "precio es requerido"}), 400
         if not comentarios: return jsonify({"msg": "comentarios es requerido"}), 400
-    
 
-        libro = Libro.query.filter_by(titulo=titulo).first()
-        if libro: return jsonify({"error": "ERROR", "msg": "Libro ya existe!!!"}), 400
+        user = Cliente.query.filter_by(id=cliente_id).first()
+        if not user: return jsonify({"msg": "Usuario no existe"}), 400
+    
+        #libro = Libro.query.filter_by(id=id and cliente_id == cliente_id).first()
+        #if libro: return jsonify({"error": "ERROR", "msg": "Libro ya existe!!!"}), 400
     
         libro = Libro()
         libro.cliente_id = cliente_id
@@ -327,6 +330,23 @@ def crearlibroid(id = None):
         libro.update()
 
         return jsonify({"msg": "Registro Borrado"}), 200
+
+#======================GET - Todos los Libros de un USUARIO==============================================
+
+@app.route("/api/usuario/<int:cliente_id>/libro", methods=['GET'])
+@app.route("/api/usuario/<int:cliente_id>/libro/<int:id>", methods=['GET'])
+def libroxusuario(cliente_id, id=None):
+
+    if request.method == 'GET':
+        if id is not None:
+            libroxcliente = Libro.query.filter_by(cliente_id=cliente_id, id = id).first()
+            if not libroxcliente: return jsonify({"msg":"Cliente sin Libros"}),404
+            return jsonify(libroxcliente.serialize()),200
+        else:
+            libroxcliente = Libro.query.filter_by(cliente_id = cliente_id).all()
+            if not libroxcliente: return jsonify({"msg":"Cliente sin Libros"}),404
+            libroxcliente = list(map(lambda libroxcliente: libroxcliente.serialize(), libroxcliente))
+            return jsonify(libroxcliente),200
 
 if __name__ == '__main__':
     manager.run()

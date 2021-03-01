@@ -6,7 +6,7 @@ class Cliente(db.Model):
     __tablename__ = 'clientes'
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     nombreCompleto = db.Column(db.String(100), nullable=False)
-    correo = db.Column(db.String(100), nullable=False)
+    correo = db.Column(db.String(100), nullable=False, unique=True)
     contrasenia = db.Column(db.String(100), nullable=False)
     telefono = db.Column(db.String(20), nullable=False)
     direccion = db.Column(db.String(100), nullable=False)
@@ -18,7 +18,7 @@ class Cliente(db.Model):
     f_creacion = db.Column(db.Date, nullable=True)
     f_modificacion = db.Column(db.Date, nullable=True)
     f_eliminacion = db.Column(db.Date, nullable=True)
-    libro_id = db.relationship("Libro", backref="libros", uselist=False)
+    libros_id = db.relationship('Libro', cascade='all,delete', backref="cliente", lazy=True)
     
     def serialize(self):
         return {
@@ -36,6 +36,16 @@ class Cliente(db.Model):
             "f_modificacion": self.f_modificacion,
             "f_eliminacion": self.f_eliminacion,
         }
+
+    def cliente_libro(self):
+        return {
+            "id": self.id,
+            "nombreCompleto": self.nombreCompleto,
+            "libros": self.get_libros,
+        }
+
+    def get_libros (self):
+        return list(map(lambda libro: libro.serialize(), self.libros_id))
 
     def save(self):
         db.session.add(self)
@@ -66,7 +76,7 @@ class Libro(db.Model):
     f_creacion = db.Column(db.Date, nullable=True)
     f_modificacion = db.Column(db.Date, nullable=True)
     f_eliminacion = db.Column(db.Date, nullable=True)
-    cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
+    cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id', ondelete= 'CASCADE'), nullable=False)
     
     def serialize(self):
         return {
@@ -82,7 +92,7 @@ class Libro(db.Model):
             "precio": self.precio,
             "estado": self.estado,
             "comentarios": self.comentarios,
-            "cliente_id": self.cliente_id
+            "cliente_id": self.cliente_id,
         }
 
     def save(self):
