@@ -58,7 +58,7 @@ def crearusuario():
         
 
         usuario = Cliente.query.filter_by(correo=correo).first()
-        if usuario: return jsonify({"error": "ERROR", "msg": "Usuario ya existe!!!"}), 400
+        if usuario: return jsonify({"error": "ERROR", "msg": "Usuario ya existe"}), 400
         
         usuario = Cliente()
         usuario.nombreCompleto = nombreCompleto
@@ -103,13 +103,13 @@ def login():
     contrasenia = request.json.get('contrasenia')
 
     if not correo: return jsonify({"msg": "correo es requerido"}), 400
-    if not contrasenia: return jsonify({"msg": "contraseña es requerido"}), 400
+    if not contrasenia: return jsonify({"msg": "contrasenia es requerida"}), 400
 
     user = Cliente.query.filter_by(correo=correo).first()
-    if not user: return jsonify({"msg": "correo/contraseña es incorrecto!!!"}), 400
+    if not user: return jsonify({"msg": "correo/contrasenia es incorrecta"}), 400
 
     if not check_password_hash(user.contrasenia, contrasenia):
-        return jsonify({"msg": "correo/contraseña es incorrecto!!!"}), 400
+        return jsonify({"msg": "correo/contrasenia es incorrecta"}), 400
     
     expires = datetime.timedelta(days=1)
     access_token = create_access_token(identity=user.id, expires_delta=expires)
@@ -271,7 +271,7 @@ def crearlibroid(id = None):
     if request.method == 'GET':
         if id is not None:
             libro = Libro.query.get(id)
-            if not libro or libro.estado == "borrado": return jsonify({"msg": "Registro no encontrado"}), 404
+            if not libro or libro.estado == "borrado": return jsonify({"msg": "Registro no encontrado"}), 400
             return jsonify(libro.serialize()), 200
         else:
             libro = Libro.query.all()
